@@ -1,0 +1,32 @@
+{
+    "dependencies": {
+        "@types/node": "^22.13.1",
+        "colorts": "^0.1.63",
+        "commander": "^13.1.0",
+        "node-fetch": "^3.3.2",
+        "readline-sync": "^1.4.10"
+    },
+    "type": "commonjs",
+    "name": "@mc-resource/cli",
+    "version": "0.0.1-experimental-3-20250714",
+    "description": "a Resource Manager for Minecraft",
+    "repository": "https://github.com/mc-resource/cli",
+    "main": "src/main.ts",
+    "scripts": {
+        "dev": "tsx src/main.ts",
+        "build": "tsc",
+        "format": "prettier . --write",
+        "link": "tsc && npm link"
+    },
+    "bin": {
+        "mcr": "./dist/main.js"
+    },
+    "author": "mc-resource",
+    "license": "MIT",
+    "devDependencies": {
+        "@types/readline-sync": "^1.4.8",
+        "prettier": "^3.6.2",
+        "tsx": "^4.19.2",
+        "typescript": "^5.8.3"
+    }
+}

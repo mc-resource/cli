@@ -1,0 +1,9 @@
+# Minecraft Resource Manager (MCR) by Arman Studios
+
+# Configuration file
+# feel free to change config settings based on your needs.
+
+# Default Language for translations.
+# Default: 'en_US'
+# Note: be sure the specified language is available on lang folder in Installation/Project directory.
+language: 'en_US'

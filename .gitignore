@@ -1,0 +1,11 @@
+dist
+node_modules
+.idea
+.env
+
+mods
+plugins
+resourcepacks
+shaderpacks
+
+concrete.json
