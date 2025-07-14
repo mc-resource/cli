@@ -9,6 +9,7 @@ import { generateDirectory } from '../../../utils/directoryManager';
 import { ProjectVersion } from './types/ProjectVersion';
 import { Project } from './types/Project';
 import { concreteConfig } from '../../../main';
+import ResourceType from './enums/resourceType';
 
 interface downloadResourceOptions {
     resource: string;
@@ -82,13 +83,13 @@ export const downloadResource = async ({
         const file = version.getPrimaryFile();
         if (file?.url) {
             const resourceFolder =
-                resourceType === 'mod'
+                resourceType === ResourceType.MOD
                     ? 'mods'
-                    : resourceType === 'plugin'
+                    : resourceType === ResourceType.PLUGIN
                       ? 'plugins'
-                      : resourceType === 'resourcepack'
+                      : resourceType === ResourceType.RESOURCE_PACK
                         ? 'resourcepacks'
-                        : resourceType === 'shader'
+                        : resourceType === ResourceType.SHADER
                           ? 'shaderpacks'
                           : 'mcr';
             generateDirectory(`${process.cwd()}/${resourceFolder}/`);
