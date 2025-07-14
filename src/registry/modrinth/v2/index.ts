@@ -14,6 +14,7 @@ interface downloadResourceOptions {
     resource: string;
     game_versions?: string[];
     loaders?: string[];
+    printResult?: boolean;
 }
 
 const userAgent = generateUserAgent({
@@ -49,10 +50,12 @@ export const downloadResource = async ({
         }
         if (version.id) {
             if (concreteConfig.checkForResourceVersion(version.id)) {
-                console.log(
-                    `Resource ${project.title?.bold}:${version.version_number?.bold} is already installed.`
-                        .yellow,
-                );
+                if (options.printResult) {
+                    console.log(
+                        `Resource ${project.title?.bold}@${version.version_number?.bold} is already installed.`
+                            .yellow,
+                    );
+                }
                 return;
             }
             if (projectCheck) {
@@ -66,7 +69,7 @@ export const downloadResource = async ({
                     ) {
                         if (
                             !rl.keyInYN(
-                                `a newer version of ${project.title?.bold}:${projectCheck.version.version_number} is already installed. are you sure you want to replace the new one with this version?`
+                                `a newer version of ${project.title?.bold}@${projectCheck.version.version_number} is already installed. are you sure you want to replace the new one with this version?`
                                     .yellow,
                             )
                         ) {
@@ -94,6 +97,7 @@ export const downloadResource = async ({
                 `${process.cwd()}/${resourceFolder}/${file.filename}`,
                 {
                     customName: `${project.title} (${version.version_number} - ${file.filename})`,
+                    printResult: options.printResult ?? true,
                 },
             );
         }

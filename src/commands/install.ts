@@ -45,6 +45,7 @@ export async function installExecute(
                 resource: resourceName,
                 game_versions: game_version,
                 loaders: loader,
+                printResult: resources.length === 1 ? true : false,
             });
         });
     }
