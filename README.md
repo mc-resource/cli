@@ -1,25 +1,26 @@
 # Resource Manager for Minecraft (MCR) 📦
 
-**Resource Manager for Minecraft (MCR)** is an advanced CLI tool for setup and manage Minecraft Instances and Servers and publishing your Resources. Possibilities of
-this tool is much higher than managing big and complex Modpacks and Servers.
+**Resource Manager for Minecraft (MCR)** is an advanced CLI tool for setting up and managing Minecraft Instances and Servers and publishing your Resources. Possibilities of
+This tool is much higher than managing big and complex Modpacks and Servers.
 
 ## Introduction
 
-> ![WARNING]
+> **⚠️ WARNING**
 > MCR is now at the very beginning (EXPERIMENTAL) stage.
 > experimental versions are available on npm to be installed.
-> consider to specify the version when installing mcr.
+Consider specifying the version when installing MCR.
 > we ask Developers to help the project. Pull Requests are welcome.
 
 Some of the Features are:
 
-- Advanced CLI Intercations
+- Advanced CLI Interactions
 - Version Control
 - ...
 
-## Installing 
+## Installation
 
-mcr requires [Node.js](https://nodejs.org/) and `npm` to be installed on your system, to install mcr you can get the cli package with:
+mcr requires [Node.js](https://nodejs.org/) and `npm` (installed with Node.js by default) to be installed on your system. To install mcr, you can get the CLI package with:
+
 ```bash
 npm i -g @mc-resource/cli
 ```
@@ -45,7 +46,7 @@ Currently, mcr Support for Loaders is defined as below:
         <td>✅ (Experimental)</td>
     </tr>
     <tr>
-        <td>Worlds, Versions, Data Packs, etc.</td>
+        <td>Worlds, Versions, Data Packs, etc.. </td>
         <td>-</td>
         <td>🚧 (Planned)</td>
     </tr>
@@ -61,7 +62,7 @@ Currently, mcr Support for Loaders is defined as below:
         <td>🚧 (Planned)</td>
     </tr>
     <tr>
-        <td>Resource Config, Server JAR, etc.</td>
+        <td>Resource Config, Server JAR, etc.. </td>
         <td>-</td>
         <td>🚧 (Planned)</td>
     </tr>
@@ -87,15 +88,15 @@ Currently, mcr Support for Loaders is defined as below:
 ## Usage
 
 mcr Command-Line Interface (CLI) is accessible using Terminal to interact with resources in the Path.
-the Shortcut is `mcr`.
+The shortcut is `mcr`.
 
 ## Quickstart
 
 - ### Initialization
 
-    Like other package managers, mcr should be initialized with a manifest file named `concrete.json` for every project. to initialize, run: `mcr init`
+    Like other package managers, mcr should be initialized with a manifest file named `concrete.json` for every project. To initialize, run: `mcr init`
     <br>terminal asks you for **Game Version** and **Loader** you want to use.
-    <br>these can be set on the first command using these options:
+    <br> These can be set on the first command using these options:
     - `--game-version`: Specifies Minecraft Version. example: `mcr init --game-version 1.20.1`
     - `--loader`: Specifies Minecraft Loader. example: `mcr init --loader fabric`
 
@@ -103,12 +104,12 @@ the Shortcut is `mcr`.
 
     `mcr install <resources...> ...`
     <br>Arguments:
-    - `resources`: resources to install. accepts multiple entries. for <a href="https://modrinth.com">Modrinth Registry</a>, this should be ID or slug of resource.
+    - `resources`: resources to install. Accepts multiple entries. for <a href="https://modrinth.com">Modrinth Registry</a>, this should be ID or slug of resource.
       <br>Example: `mcr install fabric-api sodium`
 
     Options:
-    - `--game-version`: specifies Minecraft version for install. default value is specified on `concrete.json` file.
-    - `--loader`: specifies Minecraft loader for install. default value is specified on `concrete.json` file.
-    - `--registry`: specifies the regitry to get the resource (for now only Modrinth is supported.)
+    - `--game-version`: specifies Minecraft version for installation. The default value is defined in the `concrete.json` file.
+    - `--loader`: specifies Minecraft loader for installation. The default value is defined in the `concrete.json` file.
+    - `--registry`: specifies the registry to get the resource (for now, only Modrinth is supported.)
 
 _More Content Soon..._
