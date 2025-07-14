@@ -2,6 +2,6 @@ enum ResourceType {
     MOD = 'mod',
     PLUGIN = 'plugin',
     RESOURCE_PACK = 'resourcepack',
-    SHADER = 'shader'
+    SHADER_PACK = 'shader'
 }
 export default ResourceType;

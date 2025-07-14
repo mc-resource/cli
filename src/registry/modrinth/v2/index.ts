@@ -89,7 +89,7 @@ export const downloadResource = async ({
                       ? 'plugins'
                       : resourceType === ResourceType.RESOURCE_PACK
                         ? 'resourcepacks'
-                        : resourceType === ResourceType.SHADER
+                        : resourceType === ResourceType.SHADER_PACK
                           ? 'shaderpacks'
                           : 'mcr';
             generateDirectory(`${process.cwd()}/${resourceFolder}/`);
