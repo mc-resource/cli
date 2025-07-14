@@ -13,7 +13,7 @@ interface InitOptions {
     force?: boolean;
 }
 
-async function initExecute(options: InitOptions = {}) {
+export async function initExecute(options: InitOptions = {}) {
     if (concreteConfig.checkForConcreteFile()) {
         if (options.force) {
             console.log(
@@ -42,7 +42,7 @@ async function initExecute(options: InitOptions = {}) {
     );
 
     console.log(
-        'Successfully Initialized mcpm for directory:'.green +
+        'Successfully Initialized mcr for directory:'.green +
             ' concrete.json'.yellow,
     );
 }

@@ -9,6 +9,7 @@ import {
     retrieveResourceName,
 } from '../utils/resourceRetrieve';
 import { concreteConfig } from '../main';
+import { initExecute } from './init';
 
 interface InstallOptions {
     registry?: string;
@@ -40,6 +41,10 @@ export async function installExecute(
                 undefined;
 
             const resourceName = retrieveResourceName(resource);
+
+            if (!concreteConfig.checkForConcreteFile()) {
+                await initExecute()
+            }
 
             await downloadResource({
                 resource: resourceName,
