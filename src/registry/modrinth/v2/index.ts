@@ -28,9 +28,49 @@ export const downloadResource = async ({
     ...options
 }: downloadResourceOptions) => {
     try {
-        const project: Project = await modrinthClient.getProject(
-            options.resource,
-        );
+        let project: Project;
+        try {
+            project = await modrinthClient.getProject(options.resource);
+        } catch (err) {
+            let offset = 0;
+            while (true) {
+                const searchResult = await modrinthClient.searchProjects({
+                    query: options.resource,
+                    limit: 7,
+                    offset: offset,
+                });
+                if (searchResult.hits && searchResult.hits.length > 0) {
+                    const projectSlugs = searchResult.hits
+                        .map((hit) => hit.slug)
+                        .filter((slug): slug is string => slug !== undefined);
+                        console.log(`Page ${Math.floor(offset / 7) + 1} out of ${Math.ceil(searchResult.total_hits / 7)}`);
+                    const index = rl.keyInSelect(
+                        [ ...projectSlugs, 'PREVIOUS', 'NEXT' ],
+                        'Select a Project: ',
+                    );
+                    if (index !== -1 && index <= 6) {
+                        options.resource = projectSlugs[index];
+                        project = await modrinthClient.getProject(options.resource);
+                        break;
+                    }
+                    if (index === 8) {
+                        offset += 8;
+                        continue;
+                    }
+                    if (index === 7) {
+                        offset -= 7;
+                        if (offset < 0) offset = 0;
+                        continue;
+                    }
+                } else {
+                    throw new Error(
+                        `Resource "${options.resource}" not found on Modrinth Registry.`.red,
+                    );
+                }
+                console.log('Operation cancelled.'.yellow);
+                return;
+            }
+        }
         const resourceType = project.project_type;
         let param = {
             project: project,

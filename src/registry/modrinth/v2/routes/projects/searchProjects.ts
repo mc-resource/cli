@@ -169,9 +169,9 @@ export async function searchProjects(this: ModrinthAPI, options: SearchOptions) 
     }
 
     options.query && params.set("query", options.query);
-    options.limit && params.set("query", options.limit.toString());
-    options.offset && params.set("query", options.offset.toString());
-    options.sort && params.set("query", options.sort);
+    options.limit && params.set("limit", options.limit.toString());
+    options.offset && params.set("offset", options.offset.toString());
+    options.sort && params.set("sort", options.sort);
 
     const resp = await this._request<SearchResults>("GET", "search", {
         query: params,
