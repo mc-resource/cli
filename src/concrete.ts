@@ -31,6 +31,8 @@ export class ConcreteConfig {
         }
     }
 
+    // TODO: we need to get rid of modrinth classes and types here
+    // and put them on its own registry folder
     addResource(project: Project, version: ProjectVersion, filename?: string) {
         this.loadConcreteFile();
         this.removeUnresolvedResourcesFiles();
