@@ -86,7 +86,7 @@ Currently, mcr Support for Loaders is defined as below:
 
 ## Usage
 
-mcpm Command-Line Interface (CLI) is accessible using Terminal to interact with resources in the Path.
+mcr Command-Line Interface (CLI) is accessible using Terminal to interact with resources in the Path.
 the Shortcut is `mcr`.
 
 ## Quickstart
