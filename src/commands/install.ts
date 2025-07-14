@@ -23,6 +23,10 @@ export async function installExecute(
 ) {
     options = combineWithUnknownOptions(args[0], options);
 
+    if (!concreteConfig.checkForConcreteFile()) {
+        await initExecute();
+    }
+
     if (
         options.registry === Registries.MODRINTH ||
         options.registry === Registries.MODRINTH_V2
@@ -41,10 +45,6 @@ export async function installExecute(
                 undefined;
 
             const resourceName = retrieveResourceName(resource);
-
-            if (!concreteConfig.checkForConcreteFile()) {
-                await initExecute()
-            }
 
             await downloadResource({
                 resource: resourceName,

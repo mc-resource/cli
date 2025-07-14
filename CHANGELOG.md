@@ -1,1 +1,3 @@
-nothing to say for now...
+### Changelog
+
+- taken out concrete file check out of resources loop
