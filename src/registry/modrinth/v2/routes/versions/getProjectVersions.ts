@@ -27,13 +27,13 @@ export async function getProjectVersions(
 
     if (options.loaders) {
         options.loaders = Array.isArray(options.loaders)
-            ? `["${options.loaders.join('","')}"]`
+            ? options.loaders.toString()
             : `["${options.loaders}"]`;
         options.loaders && params.set('loaders', options.loaders);
     }
     if (options.game_versions) {
         options.game_versions = Array.isArray(options.game_versions)
-            ? `["${options.game_versions.join('","')}"]`
+            ? options.game_versions.toString()
             : `["${options.game_versions}"]`;
         options.game_versions &&
             params.set('game_versions', options.game_versions);

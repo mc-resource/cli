@@ -25,6 +25,9 @@ export class ProjectVersion {
                     return file;
                 }
             }
+            if (this.files.length > 0) {
+                return this.files[0];
+            }
         } else return undefined;
     }
 }

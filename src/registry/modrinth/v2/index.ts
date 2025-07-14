@@ -43,14 +43,18 @@ export const downloadResource = async ({
                     const projectSlugs = searchResult.hits
                         .map((hit) => hit.slug)
                         .filter((slug): slug is string => slug !== undefined);
-                        console.log(`Page ${Math.floor(offset / 7) + 1} out of ${Math.ceil(searchResult.total_hits / 7)}`);
+                    console.log(
+                        `Page ${Math.floor(offset / 7) + 1} out of ${Math.ceil(searchResult.total_hits / 7)}`,
+                    );
                     const index = rl.keyInSelect(
-                        [ ...projectSlugs, 'PREVIOUS', 'NEXT' ],
+                        [...projectSlugs, 'PREVIOUS', 'NEXT'],
                         'Select a Project: ',
                     );
                     if (index !== -1 && index <= 6) {
                         options.resource = projectSlugs[index];
-                        project = await modrinthClient.getProject(options.resource);
+                        project = await modrinthClient.getProject(
+                            options.resource,
+                        );
                         break;
                     }
                     if (index === 8) {
@@ -76,15 +80,24 @@ export const downloadResource = async ({
             project: project,
             game_versions: options.game_versions?.toString(),
         };
-        if (resourceType === 'mod') {
+        if (
+            resourceType === ResourceType.MOD ||
+            resourceType === ResourceType.PLUGIN
+        ) {
             param = Object.assign(param, {
                 loaders: options.loaders?.toString(),
             });
         }
-        const version = Object.assign(
-            new ProjectVersion(),
-            (await modrinthClient.getProjectVersions(param))[0],
-        );
+
+        const versions = await modrinthClient.getProjectVersions(param);
+        if (!versions || versions.length === 0) {
+            console.log(
+                `Cannot find any resource version compatible with ${options.game_versions}-${options.loaders}`.red,
+            );
+            return;
+        }
+        const version = Object.assign(new ProjectVersion(), versions[0]);
+
         let projectCheck: boolean | ConcreteProject = false;
         if (project.id) {
             projectCheck = concreteConfig.checkForResource(project.id);
