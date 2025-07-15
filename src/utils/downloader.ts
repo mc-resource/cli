@@ -64,9 +64,9 @@ export async function downloadAndSaveFromURL<T extends Record<string, any>>(
     });
 
     clearInterval(spinnerInterval);
-    if (options?.printResult) {
-        process.stdout.write(
-            '\rSuccessfully downloaded: '.green + `${customName}\n`.yellow,
-        );
-    }
+    // if (options?.printResult) {
+    //     process.stdout.write(
+    //         '\rSuccessfully downloaded: '.green + `${customName}\n`.yellow,
+    //     );
+    // }
 }

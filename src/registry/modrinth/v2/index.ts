@@ -2,7 +2,7 @@ import * as pkg from '../../../../package.json';
 import * as rl from 'readline-sync';
 import { generateUserAgent } from './utils';
 import { ModrinthAPI } from './ModrinthAPI';
-import { ConcreteConfig, ConcreteProject } from '../../../concrete';
+import { ConcreteProject } from '../../../concrete';
 import { ConcreteFileNotFoundException } from '../../../exceptions/concreteExceptions';
 import { downloadAndSaveFromURL } from '../../../utils/downloader';
 import { generateDirectory } from '../../../utils/directoryManager';
@@ -10,6 +10,7 @@ import { ProjectVersion } from './types/ProjectVersion';
 import { Project } from './types/Project';
 import { concreteConfig } from '../../../main';
 import ResourceType from './enums/resourceType';
+import DownloadResourceResult from './enums/downloadResourceResult';
 
 interface downloadResourceOptions {
     resource: string;
@@ -67,12 +68,13 @@ export const downloadResource = async ({
                         continue;
                     }
                 } else {
-                    throw new Error(
-                        `Resource "${options.resource}" not found on Modrinth Registry.`.red,
-                    );
+                    // throw new Error(
+                    //     `Resource "${options.resource}" not found on Modrinth Registry.`.red,
+                    // );
+                    return DownloadResourceResult.FAIL_RESOURCE_NOT_FOUND;
                 }
-                console.log('Operation cancelled.'.yellow);
-                return;
+                // console.log('Operation cancelled.'.yellow);
+                return DownloadResourceResult.FAIL_OPERATION_CANCELLED;
             }
         }
         const resourceType = project.project_type;
@@ -91,10 +93,10 @@ export const downloadResource = async ({
 
         const versions = await modrinthClient.getProjectVersions(param);
         if (!versions || versions.length === 0) {
-            console.log(
-                `Cannot find any resource version compatible with ${options.game_versions}-${options.loaders}`.red,
-            );
-            return;
+            // console.log(
+            //     `Cannot find any resource version compatible with ${options.game_versions}-${options.loaders}`.red,
+            // );
+            return DownloadResourceResult.FAIL_NO_COMPATIBLE_VERSION;
         }
         const version = Object.assign(new ProjectVersion(), versions[0]);
 
@@ -105,12 +107,12 @@ export const downloadResource = async ({
         if (version.id) {
             if (concreteConfig.checkForResourceVersion(version.id)) {
                 if (options.printResult) {
-                    console.log(
-                        `Resource ${project.title?.bold}@${version.version_number?.bold} is already installed.`
-                            .yellow,
-                    );
+                    // console.log(
+                    //     `Resource ${project.title?.bold}@${version.version_number?.bold} is already installed.`
+                    //         .yellow,
+                    // );
                 }
-                return;
+                return DownloadResourceResult.FAIL_VERSION_ALREADY_INSTALLED;
             }
             if (projectCheck) {
                 if (
@@ -127,7 +129,7 @@ export const downloadResource = async ({
                                     .yellow,
                             )
                         ) {
-                            return;
+                            return DownloadResourceResult.FAIL_OPERATION_CANCELLED;
                         }
                     }
                 }
@@ -159,11 +161,12 @@ export const downloadResource = async ({
             concreteConfig.removeResource(project);
         }
         concreteConfig.addResource(project, version, file?.filename);
+        return DownloadResourceResult.SUCCESS;
     } catch (e) {
         if (e instanceof ConcreteFileNotFoundException) {
             console.error(e.message.red);
         }
         console.error(e);
+        return DownloadResourceResult.FAIL_UNKNOWN;
     }
-    // }
 };

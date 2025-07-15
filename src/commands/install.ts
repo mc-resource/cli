@@ -31,7 +31,13 @@ export async function installExecute(
         options.registry === Registries.MODRINTH ||
         options.registry === Registries.MODRINTH_V2
     ) {
-        resources.forEach(async (resource) => {
+        let result = {
+            success: 0,
+            failed: 0,
+            skipped: 0,
+        };
+
+        await Promise.all(resources.map(async (resource) => {
             const game_version =
                 retrieveGameVersion(resource) ||
                 options.game_version ||
@@ -46,13 +52,34 @@ export async function installExecute(
 
             const resourceName = retrieveResourceName(resource);
 
-            await downloadResource({
+            const downloadResult = await downloadResource({
                 resource: resourceName,
                 game_versions: game_version,
                 loaders: loader,
                 printResult: resources.length === 1 ? true : false,
             });
-        });
+
+            switch (downloadResult) {
+                case 0:
+                    result.success += 1;
+                    break;
+                case 3:
+                    result.skipped += 1;
+                    break;
+                case 4:
+                    result.skipped += 1;
+                    break;
+                default:
+                    result.failed += 1;
+                    break;
+            }
+        }));
+
+        console.log(
+            `\nInstalled ${result.success} resources, ${result.failed} failed and ${result.skipped} skipped.`,
+        );
+
+        return
     }
 }
 
