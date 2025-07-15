@@ -3,9 +3,10 @@
 
 # Resource Manager for Minecraft (MCR) 📦
 
-![NPM](https://img.shields.io/badge/npm-%40mc--resource%2Fcli-red?link=https%3A%2F%2Fwww.npmjs.com%2Fpackage%2F%40mc-resource%2Fcli&style=flat-square)
-![Latest](https://img.shields.io/npm/v/@mc-resource/cli/latest?link=https://www.npmjs.com/package/@mc-resource/cli&color=emerald&label=Latest&style=flat-square)
-![Experimental](https://img.shields.io/npm/v/@mc-resource/cli/experimental?label=Experimental&link=https://www.npmjs.com/package/@mc-resource/cli&style=flat-square)
+<a href="https://discord.com/invite/z94zBybbhX"><img src="https://img.shields.io/badge/Discord-Click_Here-5865F2?style=flat-square&logo=discord&logoColor=white" /></a>
+<a href="https://www.npmjs.com/package/@mc-resource/cli"><img src="https://img.shields.io/badge/npm-%40mc--resource%2Fcli-red?style=flat-square&logo=npm" /></a>
+<a href="https://www.npmjs.com/package/@mc-resource/cli"><img src="https://img.shields.io/npm/v/@mc-resource/cli/latest?link=https://www.npmjs.com/package/@mc-resource/cli&color=emerald&label=Latest&style=flat-square" /></a>
+<a href="https://www.npmjs.com/package/@mc-resource/cli"><img src="https://img.shields.io/npm/v/@mc-resource/cli/experimental?label=Experimental&link=https://www.npmjs.com/package/@mc-resource/cli&style=flat-square" /></a>
 
 **Resource Manager for Minecraft (MCR)** is an advanced CLI tool for setting up and managing Minecraft Instances and Servers and publishing your Resources. Possibilities of
 This tool is much higher than managing big and complex Modpacks and Servers.
