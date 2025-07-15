@@ -69,4 +69,6 @@ export async function downloadAndSaveFromURL<T extends Record<string, any>>(
     //         '\rSuccessfully downloaded: '.green + `${customName}\n`.yellow,
     //     );
     // }
+
+    process.stdout.write('\r'+' '.repeat(process.stdout.getWindowSize()[0]));
 }

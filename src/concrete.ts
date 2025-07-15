@@ -1,94 +1,77 @@
 import fs from 'fs';
-import { ConcreteFileNotFoundException } from './exceptions/concreteExceptions';
-import { ProjectVersion } from './registry/modrinth/v2/types/ProjectVersion';
-import { Project } from './registry/modrinth/v2/types/Project';
+import { ConcreteProject, ConcreteProjectVersion } from './types';
 
-export interface ConcreteProject {
-    type?: string | 'mod' | 'plugin' | 'resourcepack' | 'shaderpack';
-    name?: string;
-    id?: string;
-    version?: ConcreteProjectVersion;
-}
-
-export interface ConcreteProjectVersion {
-    version_number?: string;
-    id?: string;
-    date_published?: string;
-    filename?: string;
-}
-
-export class ConcreteConfig {
-    game_version?: string;
-    loader?: string;
-    isExists?: boolean = false;
-    excludeProperties? = ['isExists', 'excludeProperties'];
-
-    resources?: ConcreteProject[];
+export class Concrete {
+    manifest?: ConcreteConfig;
 
     constructor() {
         if (this.checkForConcreteFile()) {
-            this.loadConcreteFile()
+            this.loadConcreteFile();
         }
+        this.manifest = Object.assign(new ConcreteConfig(), this.manifest);
+    }
+
+    checkForConcreteFile() {
+        if (fs.existsSync(`${process.cwd()}/concrete.json`)) {
+            return true;
+        }
+        return false;
+    }
+
+    loadConcreteFile() {
+        return this.manifest = JSON.parse(
+            fs.readFileSync(`${process.cwd()}/concrete.json`, 'utf8'),
+        );
     }
 
     // TODO: we need to get rid of modrinth classes and types here
     // and put them on its own registry folder
-    addResource(project: Project, version: ProjectVersion, filename?: string) {
+    addResource(project: ConcreteProject, version: ConcreteProjectVersion, filename?: string) {
         this.loadConcreteFile();
         this.removeUnresolvedResourcesFiles();
         if (this.checkForResource(project)) {
             return this;
         }
-        this.resources?.push({
-            type: project.project_type,
-            id: project.id,
-            name: project.title,
-            version: {
-                filename: filename,
-                id: version.id,
-                date_published: version.date_published,
-                version_number: version.version_number,
-            },
-        });
+        this.manifest?.dependencies?.push(project);
         this.save();
         return this;
     }
 
-    checkForResource(project: Project | string) {
+    checkForResource(project: ConcreteProject | string) {
         this.loadConcreteFile();
         this.removeUnresolvedResourcesFiles();
-        if (this.resources) {
-            if (project instanceof Project) {
-                for (const resource of this.resources) {
-                    if (resource.id == project.id) {
+        if (this.manifest?.dependencies) {
+            if (typeof project === 'object' && 'name' in project) {
+                for (const resource of this.manifest.dependencies) {
+                    if (resource.name == project.name) {
                         return resource;
                     }
                 }
             } else {
-                for (const resource of this.resources) {
-                    if (resource.id == project) {
+                for (const resource of this.manifest.dependencies) {
+                    if (resource.name == project) {
                         return resource;
                     }
                 }
             }
         }
 
-        return false;
+        return undefined;
     }
 
-    checkForResourceVersion(version: ProjectVersion | string) {
+    checkForResourceVersion(version: ConcreteProjectVersion | string) {
         this.loadConcreteFile();
         this.removeUnresolvedResourcesFiles();
-        if (this.resources) {
-            if (version instanceof ProjectVersion) {
-                for (const resource of this.resources) {
-                    if (resource.version?.id == version.id) {
+        if (this.manifest?.dependencies) {
+            if (typeof version === 'object' && 'name' in version) {
+                for (const resource of this.manifest?.dependencies) {
+                    if (resource.version?.name == version.name) {
                         return resource;
                     }
                 }
             } else {
-                for (const resource of this.resources) {
-                    if (resource.version?.id == version) {
+                for (const resource of this.manifest?.dependencies) {
+                    if (resource.version?.name == version) {
                         return resource;
                     }
                 }
@@ -97,32 +80,31 @@ export class ConcreteConfig {
     }
 
     removeUnresolvedResourcesFiles() {
-        if (this.resources) {
-            for (const resource of this.resources) {
+        if (this.manifest?.dependencies) {
+            for (const resource of this.manifest?.dependencies) {
                 if (
                     !fs.existsSync(
                         `${process.cwd()}/${resource.type}s/${resource.version?.filename}`,
                     )
                 ) {
-                    this.removeResource(resource.id || resource);
+                    this.removeResource(resource.name || resource);
                 }
             }
         }
     }
 
-    removeResource(project: Project | string) {
-        this.loadConcreteFile();
+    removeResource(project: ConcreteProject | string) {
         const concrete = this.loadConcreteFile();
-        if (project instanceof Project) {
-            concrete.resources = concrete.resources?.filter(
-                function (resource) {
-                    return resource.id !== project.id;
+        if (typeof project === 'object' && 'name' in project) {
+            concrete.dependencies = concrete.dependencies?.filter(
+                (resource: ConcreteProject) => {
+                    return resource.name !== project.name;
                 },
             );
         } else {
-            concrete.resources = concrete.resources?.filter(
-                function (resource) {
-                    return resource.id !== project;
+            concrete.dependencies = concrete.dependencies?.filter(
+                (resource: ConcreteProject) => {
+                    return resource.name !== project;
                 },
             );
         }
@@ -133,46 +115,21 @@ export class ConcreteConfig {
 
     save() {
         this.checkForConcreteFile();
-        const concrete = this.getDefaultConfig();
-        this.writeToConcreteFile(concrete);
+        const concrete = this.manifest;
+        if (concrete && 'dependencies' in concrete) this.writeToConcreteFile(concrete);
     }
 
-    getDefaultConfig() {
-        const concrete: Record<string, any> = this;
-        if (concrete.excludeProperties) {
-            concrete.excludeProperties.forEach(
-                (key: string) => delete concrete[key],
-            );
-        }
-        return concrete;
-    }
-
-    checkForConcreteFile() {
-        if (fs.existsSync(`${process.cwd()}/concrete.json`)) {
-            return true;
-        }
-        this.isExists = false;
-        return false;
-    }
-
-    writeToConcreteFile(config: Record<any, any>) {
+    writeToConcreteFile(config: ConcreteConfig | Record<any, any>) {
         this.checkForConcreteFile();
         fs.writeFileSync(
             `${process.cwd()}/concrete.json`,
             JSON.stringify(config, null, 2),
         );
     }
+}
 
-    loadConcreteFile() {
-        if (this.checkForConcreteFile()) {
-            this.isExists = true;
-        }
-        Object.assign(
-            this,
-            JSON.parse(
-                fs.readFileSync(`${process.cwd()}/concrete.json`, 'utf8'),
-            ),
-        );
-        return this;
-    }
+export class ConcreteConfig {
+    game_version?: string;
+    loader?: string;
+    dependencies?: ConcreteProject[];
 }

@@ -2,7 +2,6 @@ import * as pkg from '../../../../package.json';
 import * as rl from 'readline-sync';
 import { generateUserAgent } from './utils';
 import { ModrinthAPI } from './ModrinthAPI';
-import { ConcreteProject } from '../../../concrete';
 import { ConcreteFileNotFoundException } from '../../../exceptions/concreteExceptions';
 import { downloadAndSaveFromURL } from '../../../utils/downloader';
 import { generateDirectory } from '../../../utils/directoryManager';
@@ -11,6 +10,7 @@ import { Project } from './types/Project';
 import { concreteConfig } from '../../../main';
 import ResourceType from './enums/resourceType';
 import DownloadResourceResult from './enums/downloadResourceResult';
+import { ConcreteProject } from '../../../types';
 
 interface downloadResourceOptions {
     resource: string;
@@ -29,9 +29,10 @@ export const downloadResource = async ({
     ...options
 }: downloadResourceOptions) => {
     try {
-        let project: Project;
+        let project: ConcreteProject;
+        let modrinthProject: Project;
         try {
-            project = await modrinthClient.getProject(options.resource);
+            modrinthProject = await modrinthClient.getProject(options.resource);
         } catch (err) {
             let offset = 0;
             while (true) {
@@ -53,7 +54,7 @@ export const downloadResource = async ({
                     );
                     if (index !== -1 && index <= 6) {
                         options.resource = projectSlugs[index];
-                        project = await modrinthClient.getProject(
+                        modrinthProject = await modrinthClient.getProject(
                             options.resource,
                         );
                         break;
@@ -68,18 +69,16 @@ export const downloadResource = async ({
                         continue;
                     }
                 } else {
-                    // throw new Error(
-                    //     `Resource "${options.resource}" not found on Modrinth Registry.`.red,
-                    // );
+                    // Resource not found
                     return DownloadResourceResult.FAIL_RESOURCE_NOT_FOUND;
                 }
-                // console.log('Operation cancelled.'.yellow);
+                // Operation cancelled
                 return DownloadResourceResult.FAIL_OPERATION_CANCELLED;
             }
         }
-        const resourceType = project.project_type;
+        const resourceType = modrinthProject.project_type;
         let param = {
-            project: project,
+            project: modrinthProject,
             game_versions: options.game_versions?.toString(),
         };
         if (
@@ -93,25 +92,18 @@ export const downloadResource = async ({
 
         const versions = await modrinthClient.getProjectVersions(param);
         if (!versions || versions.length === 0) {
-            // console.log(
-            //     `Cannot find any resource version compatible with ${options.game_versions}-${options.loaders}`.red,
-            // );
+            // Cannot find a compatible version
             return DownloadResourceResult.FAIL_NO_COMPATIBLE_VERSION;
         }
         const version = Object.assign(new ProjectVersion(), versions[0]);
 
-        let projectCheck: boolean | ConcreteProject = false;
-        if (project.id) {
-            projectCheck = concreteConfig.checkForResource(project.id);
+        let projectCheck: ConcreteProject | undefined;
+        if (modrinthProject.id) {
+            projectCheck = concreteConfig.checkForResource(modrinthProject.id);
         }
-        if (version.id) {
-            if (concreteConfig.checkForResourceVersion(version.id)) {
-                if (options.printResult) {
-                    // console.log(
-                    //     `Resource ${project.title?.bold}@${version.version_number?.bold} is already installed.`
-                    //         .yellow,
-                    // );
-                }
+        if (version.name) {
+            if (concreteConfig.checkForResourceVersion(version.name)) {
+                // Version already installed
                 return DownloadResourceResult.FAIL_VERSION_ALREADY_INSTALLED;
             }
             if (projectCheck) {
@@ -119,13 +111,14 @@ export const downloadResource = async ({
                     version.date_published &&
                     projectCheck.version?.date_published
                 ) {
+                    // TODO: this section needs work
                     if (
                         new Date(version.date_published).getTime <
                         new Date(projectCheck.version?.date_published).getTime
                     ) {
                         if (
                             !rl.keyInYN(
-                                `a newer version of ${project.title?.bold}@${projectCheck.version.version_number} is already installed. are you sure you want to replace the new one with this version?`
+                                `a newer version of ${modrinthProject.title?.bold}@${projectCheck.version.name} is already installed. are you sure you want to replace the new one with this version?`
                                     .yellow,
                             )
                         ) {
@@ -152,13 +145,36 @@ export const downloadResource = async ({
                 file.url,
                 `${process.cwd()}/${resourceFolder}/${file.filename}`,
                 {
-                    customName: `${project.title} (${version.version_number} - ${file.filename})`,
+                    customName: `${modrinthProject.title} (${version.version_number} - ${file.filename})`,
                     printResult: options.printResult ?? true,
                 },
             );
         }
         if (projectCheck) {
+            project = {
+                name: modrinthProject.slug,
+                type: modrinthProject.project_type,
+                version: {
+                    id: projectCheck.version?.id,
+                    name: projectCheck.version?.name,
+                    title: projectCheck.version?.title,
+                    date_published: projectCheck.version?.date_published,
+                    filename: projectCheck.version?.filename,
+                },
+            }
             concreteConfig.removeResource(project);
+        } else {
+            project = {
+                name: modrinthProject.slug,
+                type: modrinthProject.project_type,
+                version: {
+                    id: version.id,
+                    name: version.version_number,
+                    title: version.name,
+                    date_published: version.date_published,
+                    filename: file?.filename,
+                },
+            }
         }
         concreteConfig.addResource(project, version, file?.filename);
         return DownloadResourceResult.SUCCESS;

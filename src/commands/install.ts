@@ -37,17 +37,17 @@ export async function installExecute(
             skipped: 0,
         };
 
-        await Promise.all(resources.map(async (resource) => {
+        for (const resource of resources) {
             const game_version =
                 retrieveGameVersion(resource) ||
                 options.game_version ||
-                concreteConfig.game_version ||
+                concreteConfig.manifest?.game_version ||
                 undefined;
 
             const loader =
                 retrieveLoader(resource) ||
                 options.loader ||
-                concreteConfig.loader ||
+                concreteConfig.manifest?.loader ||
                 undefined;
 
             const resourceName = retrieveResourceName(resource);
@@ -73,10 +73,10 @@ export async function installExecute(
                     result.failed += 1;
                     break;
             }
-        }));
+        };
 
         console.log(
-            `\nInstalled ${result.success} resources, ${result.failed} failed and ${result.skipped} skipped.`,
+            `\rInstalled ${result.success} resources, ${result.failed} failed and ${result.skipped} skipped.`,
         );
 
         return

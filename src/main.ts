@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 import { run } from './cli';
-import { ConcreteConfig } from './concrete';
+import { Concrete } from './concrete';
 
-export const concreteConfig = new ConcreteConfig();
+export const concreteConfig = new Concrete();
 
 run();
