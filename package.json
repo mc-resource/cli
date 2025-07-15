@@ -8,7 +8,7 @@
     },
     "type": "commonjs",
     "name": "@mc-resource/cli",
-    "version": "0.0.1-experimental-6-20250714",
+    "version": "0.0.1-experimental-1-20250715",
     "description": "a Resource Manager for Minecraft",
     "repository": "https://github.com/mc-resource/cli",
     "main": "src/main.ts",
