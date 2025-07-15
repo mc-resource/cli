@@ -1,3 +1,3 @@
 ### Changelog
 
-- added shields.io badges into README for latest and experimental tags
+- added NPM badge and changed badges style to flat-square
