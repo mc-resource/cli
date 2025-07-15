@@ -3,7 +3,9 @@
 
 # Resource Manager for Minecraft (MCR) 📦
 
-<img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fmc-resource%2Fcli%2F23663d67f3ce63757b5e7812f329fdac908fba09%2Fpackage.json&query=%24.version&label=Latest" /> <img src="https://img.shields.io/npm/v/@mc-resource/cli/experimental?label=Experimental" />
+![NPM](https://img.shields.io/badge/npm-%40mc--resource%2Fcli-red?link=https%3A%2F%2Fwww.npmjs.com%2Fpackage%2F%40mc-resource%2Fcli&style=flat-square)
+![Latest](https://img.shields.io/npm/v/@mc-resource/cli/latest?link=https://www.npmjs.com/package/@mc-resource/cli&color=emerald&label=Latest&style=flat-square)
+![Experimental](https://img.shields.io/npm/v/@mc-resource/cli/experimental?label=Experimental&link=https://www.npmjs.com/package/@mc-resource/cli&style=flat-square)
 
 **Resource Manager for Minecraft (MCR)** is an advanced CLI tool for setting up and managing Minecraft Instances and Servers and publishing your Resources. Possibilities of
 This tool is much higher than managing big and complex Modpacks and Servers.
