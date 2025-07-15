@@ -1,3 +1,4 @@
 ### Changelog
 
-- added NPM badge and changed badges style to flat-square
+- added Discord badge
+- changed badges format to html
