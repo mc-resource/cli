@@ -22,7 +22,7 @@ jobs:
         with:
           failOnError: true
           outputFile: CHANGELOG.md
-          configuration: .github/release-changelog-builder.yml
+          configuration: .github/release-config.yml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -34,7 +34,7 @@ jobs:
           echo "$CHANGELOG" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-      - name: Create GitHub release (pre-release)
+      - name: Create GitHub release
         uses: softprops/action-gh-release@v2
         with:
           body: ${{ steps.readlog.outputs.log }}
