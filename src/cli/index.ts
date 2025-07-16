@@ -17,7 +17,7 @@ export function run() {
                 command.alias(alias);
             });
         }
-        
+
         commandDef.configure(command);
     }
 

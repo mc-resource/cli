@@ -6,7 +6,7 @@ export interface UserAgentData {
 }
 
 export function generateUserAgent(ua: UserAgentData): string {
-    let output = "";
+    let output = '';
 
     if (ua.githubUsername) output += `${ua.githubUsername}/`;
     output += ua.projectName;

@@ -73,13 +73,13 @@ export async function installExecute(
                     result.failed += 1;
                     break;
             }
-        };
+        }
 
         console.log(
             `\rInstalled ${result.success} resources, ${result.failed} failed and ${result.skipped} skipped.`,
         );
 
-        return
+        return;
     }
 }
 

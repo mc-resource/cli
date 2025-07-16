@@ -7,7 +7,7 @@ export const retrieveGameVersion = (resource: string) => {
         }
     }
     return undefined;
-}
+};
 
 export const retrieveLoader = (resource: string) => {
     if (resource.includes(':')) {
@@ -18,11 +18,11 @@ export const retrieveLoader = (resource: string) => {
         }
     }
     return undefined;
-}
+};
 
 export const retrieveResourceName = (resource: string) => {
     if (resource.includes(':')) {
         return resource.split(':')[0];
     }
     return resource;
-}
+};

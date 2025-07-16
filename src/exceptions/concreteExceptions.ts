@@ -13,7 +13,10 @@ export class ConcreteFileAlreadyExistsException extends Error {
         'concrete.json file already exists in the current directory. for overwriting it, use the --force flag.';
     constructor() {
         super();
-        Object.setPrototypeOf(this, ConcreteFileAlreadyExistsException.prototype);
+        Object.setPrototypeOf(
+            this,
+            ConcreteFileAlreadyExistsException.prototype,
+        );
     }
 }
 export class InvalidConcreteFileException extends Error {

@@ -161,7 +161,7 @@ export const downloadResource = async ({
                     date_published: projectCheck.version?.date_published,
                     filename: projectCheck.version?.filename,
                 },
-            }
+            };
             concreteConfig.removeResource(project);
         } else {
             project = {
@@ -174,7 +174,7 @@ export const downloadResource = async ({
                     date_published: version.date_published,
                     filename: file?.filename,
                 },
-            }
+            };
         }
         concreteConfig.addResource(project, version, file?.filename);
         return DownloadResourceResult.SUCCESS;

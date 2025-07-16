@@ -1,6 +1,6 @@
-import {getProjectVersions} from "../routes/versions/getProjectVersions";
-import {ProjectVersion} from "./ProjectVersion";
-import {modrinthClient} from "../index";
+import { getProjectVersions } from '../routes/versions/getProjectVersions';
+import { ProjectVersion } from './ProjectVersion';
+import { modrinthClient } from '../index';
 
 export class Project {
     slug?: string;
@@ -33,7 +33,7 @@ export class Project {
     versions?: string[];
     game_versions?: string[];
     loaders?: string[];
-    gallery?: {}[]
+    gallery?: {}[];
 
     // getVersions: ((this: Project) => Promise<ProjectVersion[]>) = getVersions
     // async getVersions(this: Project): Promise<ProjectVersion[]> {

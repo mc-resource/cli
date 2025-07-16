@@ -1,4 +1,4 @@
-import {ProjectVersionFile} from "./ProjectVersionFile";
+import { ProjectVersionFile } from './ProjectVersionFile';
 
 export class ProjectVersion {
     name?: string;

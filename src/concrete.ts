@@ -19,14 +19,18 @@ export class Concrete {
     }
 
     loadConcreteFile() {
-        return this.manifest = JSON.parse(
+        return (this.manifest = JSON.parse(
             fs.readFileSync(`${process.cwd()}/concrete.json`, 'utf8'),
-        );
+        ));
     }
 
     // TODO: we need to get rid of modrinth classes and types here
     // and put them on its own registry folder
-    addResource(project: ConcreteProject, version: ConcreteProjectVersion, filename?: string) {
+    addResource(
+        project: ConcreteProject,
+        version: ConcreteProjectVersion,
+        filename?: string,
+    ) {
         this.loadConcreteFile();
         this.removeUnresolvedResourcesFiles();
         if (this.checkForResource(project)) {
@@ -116,7 +120,8 @@ export class Concrete {
     save() {
         this.checkForConcreteFile();
         const concrete = this.manifest;
-        if (concrete && 'dependencies' in concrete) this.writeToConcreteFile(concrete);
+        if (concrete && 'dependencies' in concrete)
+            this.writeToConcreteFile(concrete);
     }
 
     writeToConcreteFile(config: ConcreteConfig | Record<any, any>) {

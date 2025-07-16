@@ -17,7 +17,8 @@ export async function initExecute(options: InitOptions = {}) {
     if (concreteConfig.checkForConcreteFile()) {
         if (options.force) {
             console.log(
-                'concrete.json file already exists in the current directory. overwriting it...'.yellow,
+                'concrete.json file already exists in the current directory. overwriting it...'
+                    .yellow,
             );
         } else {
             throw new ConcreteFileAlreadyExistsException();
@@ -26,12 +27,14 @@ export async function initExecute(options: InitOptions = {}) {
 
     let concreteJson = concreteDefault;
 
-    concreteJson.game_version = options.gameVersion ?? rl.question('Enter Minecraft version: ');
+    concreteJson.game_version =
+        options.gameVersion ?? rl.question('Enter Minecraft version: ');
     console.log(
         'Set Minecraft version: '.green + `${concreteJson.game_version}`.yellow,
     );
 
-    concreteJson.loader = options.loader ?? rl.question('Enter Minecraft loader: ');
+    concreteJson.loader =
+        options.loader ?? rl.question('Enter Minecraft loader: ');
     console.log(
         'Set Minecraft loader: '.green + `${concreteJson.loader}`.yellow,
     );
@@ -66,7 +69,10 @@ export const InitCommand: CommandDefinition = {
                 ),
             )
             .addOption(
-                new Option('--force', 'Force overwrite existing concrete.json file.'),
+                new Option(
+                    '--force',
+                    'Force overwrite existing concrete.json file.',
+                ),
             )
             .action(initExecute);
     },

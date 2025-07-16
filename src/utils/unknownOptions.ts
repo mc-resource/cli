@@ -19,6 +19,9 @@ export const getUnknownOptions = (command: Command) => {
     return unknown;
 };
 
-export const combineWithUnknownOptions = (command: Command, options: Record<string, any>) => {
+export const combineWithUnknownOptions = (
+    command: Command,
+    options: Record<string, any>,
+) => {
     return { ...options, ...getUnknownOptions(command) };
-}
+};

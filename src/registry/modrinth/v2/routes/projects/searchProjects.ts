@@ -1,31 +1,31 @@
-import type {ModrinthAPI} from "../../ModrinthAPI";
-import {Project} from "../../types/Project";
+import type { ModrinthAPI } from '../../ModrinthAPI';
+import { Project } from '../../types/Project';
 
 export enum FacetType {
-    project_type = "projectType",
-    categories = "categories",
-    versions = "versions",
-    client_side = "clientSide",
-    server_side = "serverSide",
-    open_source = "openSource",
-    title = "title",
-    author = "author",
-    follows = "follows",
-    project_id = "projectId",
-    license = "license",
-    downloads = "downloads",
-    color = "color",
-    created_timestamp = "createdTimestamp",
-    modified_timestamp = "modifiedTimestamp",
+    project_type = 'projectType',
+    categories = 'categories',
+    versions = 'versions',
+    client_side = 'clientSide',
+    server_side = 'serverSide',
+    open_source = 'openSource',
+    title = 'title',
+    author = 'author',
+    follows = 'follows',
+    project_id = 'projectId',
+    license = 'license',
+    downloads = 'downloads',
+    color = 'color',
+    created_timestamp = 'createdTimestamp',
+    modified_timestamp = 'modifiedTimestamp',
 }
 
 export enum FacetOperation {
-    "=",
-    "!=",
-    ">=",
-    ">",
-    "<=",
-    "<",
+    '=',
+    '!=',
+    '>=',
+    '>',
+    '<=',
+    '<',
 }
 
 export type FacetValue = string | number;
@@ -35,9 +35,12 @@ export const Facets: { [key in FacetType]: () => SingleFacetBuilder } = {
         new SingleFacetBuilder(FacetType.project_type),
     [FacetType.categories]: () => new SingleFacetBuilder(FacetType.categories),
     [FacetType.versions]: () => new SingleFacetBuilder(FacetType.versions),
-    [FacetType.client_side]: () => new SingleFacetBuilder(FacetType.client_side),
-    [FacetType.server_side]: () => new SingleFacetBuilder(FacetType.server_side),
-    [FacetType.open_source]: () => new SingleFacetBuilder(FacetType.open_source),
+    [FacetType.client_side]: () =>
+        new SingleFacetBuilder(FacetType.client_side),
+    [FacetType.server_side]: () =>
+        new SingleFacetBuilder(FacetType.server_side),
+    [FacetType.open_source]: () =>
+        new SingleFacetBuilder(FacetType.open_source),
     [FacetType.title]: () => new SingleFacetBuilder(FacetType.title),
     [FacetType.author]: () => new SingleFacetBuilder(FacetType.author),
     [FacetType.follows]: () => new SingleFacetBuilder(FacetType.follows),
@@ -54,7 +57,7 @@ export const Facets: { [key in FacetType]: () => SingleFacetBuilder } = {
 export interface SearchOptions {
     query?: string;
     facets?: SingleFacetBuilder[] | SingleFacetBuilder;
-    sort?: "relevance" | "downloads" | "follows" | "newest" | "updated";
+    sort?: 'relevance' | 'downloads' | 'follows' | 'newest' | 'updated';
     offset?: number;
     limit?: number;
 }
@@ -70,42 +73,42 @@ class SingleFacetBuilder {
     }
 
     equals(value: FacetValue): SingleFacetBuilder {
-        this.facetOperation = FacetOperation["="];
+        this.facetOperation = FacetOperation['='];
         this.facetValue = value;
         this._commitFacet();
         return this;
     }
 
     notEquals(value: FacetValue): SingleFacetBuilder {
-        this.facetOperation = FacetOperation["!="];
+        this.facetOperation = FacetOperation['!='];
         this.facetValue = value;
         this._commitFacet();
         return this;
     }
 
     greaterThanOrEqualsTo(value: FacetValue): SingleFacetBuilder {
-        this.facetOperation = FacetOperation[">="];
+        this.facetOperation = FacetOperation['>='];
         this.facetValue = value;
         this._commitFacet();
         return this;
     }
 
     greaterThan(value: FacetValue): SingleFacetBuilder {
-        this.facetOperation = FacetOperation[">"];
+        this.facetOperation = FacetOperation['>'];
         this.facetValue = value;
         this._commitFacet();
         return this;
     }
 
     lessThanOrEqualsTo(value: FacetValue): SingleFacetBuilder {
-        this.facetOperation = FacetOperation["<="];
+        this.facetOperation = FacetOperation['<='];
         this.facetValue = value;
         this._commitFacet();
         return this;
     }
 
     lessThan(value: FacetValue): SingleFacetBuilder {
-        this.facetOperation = FacetOperation["<"];
+        this.facetOperation = FacetOperation['<'];
         this.facetValue = value;
         this._commitFacet();
         return this;
@@ -129,12 +132,12 @@ class SingleFacetBuilder {
 
     private _commitFacet(): string[] {
         if (this.facetOperation === undefined || this.facetValue === undefined)
-            throw new Error("Cannot commit facet without operation and value.");
+            throw new Error('Cannot commit facet without operation and value.');
 
         this.alternatives.push(
             `${this.facetType} ${FacetOperation[this.facetOperation]} ${
                 this.facetValue
-            }`
+            }`,
         );
 
         return this.alternatives;
@@ -154,30 +157,33 @@ export interface SearchResults {
     getLast?: () => Project;
 }
 
-export async function searchProjects(this: ModrinthAPI, options: SearchOptions) {
+export async function searchProjects(
+    this: ModrinthAPI,
+    options: SearchOptions,
+) {
     const params = new URLSearchParams();
 
     if (options.facets) {
         params.set(
-            "facets",
+            'facets',
             JSON.stringify(
                 Array.isArray(options.facets)
                     ? options.facets
-                    : [options.facets].map((v) => v.build())
-            )
+                    : [options.facets].map((v) => v.build()),
+            ),
         );
     }
 
-    options.query && params.set("query", options.query);
-    options.limit && params.set("limit", options.limit.toString());
-    options.offset && params.set("offset", options.offset.toString());
-    options.sort && params.set("sort", options.sort);
+    options.query && params.set('query', options.query);
+    options.limit && params.set('limit', options.limit.toString());
+    options.offset && params.set('offset', options.offset.toString());
+    options.sort && params.set('sort', options.sort);
 
-    const resp = await this._request<SearchResults>("GET", "search", {
+    const resp = await this._request<SearchResults>('GET', 'search', {
         query: params,
     });
     return {
         ...resp,
-        getFirst: () => resp.hits[0] ?? null
-    }
+        getFirst: () => resp.hits[0] ?? null,
+    };
 }

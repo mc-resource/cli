@@ -60,7 +60,8 @@ export class ModrinthAPI {
                 );
             } else if (err.code === 'EAI_AGAIN') {
                 console.error(
-                    'DNS lookup failed (EAI_AGAIN). Are you online? DNS may be misconfigured.'.red,
+                    'DNS lookup failed (EAI_AGAIN). Are you online? DNS may be misconfigured.'
+                        .red,
                 );
             }
             throw err;
