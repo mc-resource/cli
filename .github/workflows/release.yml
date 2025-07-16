@@ -41,3 +41,18 @@ jobs:
           prerelease: ${{ contains(github.ref, '-') }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: GitHub Releases to Discord
+        uses: SethCohen/github-releases-to-discord@v1
+        with:
+          webhook_url: ${{ secrets.WEBHOOK_URL }}
+          color: |
+            if [[ "${GITHUB_REF##*/}" == *-* ]]; then
+              echo "color=d29922"
+            else
+              echo "color=3eb991"
+            fi
+          content: "<@&1394740955000606902>"
+          footer_title: "github-actions"
+          reduce_headings: true
+          footer_timestamp: true
