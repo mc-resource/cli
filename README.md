@@ -10,7 +10,7 @@
     <img src="https://img.shields.io/badge/npm-%40mc--resource%2Fcli-red?style=flat-square&logo=npm" />
 </a>
 <a href="https://www.npmjs.com/package/@mc-resource/cli">
-    <img src="https://img.shields.io/npm/dm/%40mc-resource%2Fcli?style=flat-square&label=Downloads&color=purple">
+    <img src="https://img.shields.io/npm/dm/%40mc-resource%2Fcli?style=flat-square&label=Downloads&color=purple&logo=npm">
 </a>
 <a href="https://www.npmjs.com/package/@mc-resource/cli">
     <img src="https://img.shields.io/npm/v/@mc-resource/cli/latest?link=https://www.npmjs.com/package/@mc-resource/cli&color=emerald&label=Latest&style=flat-square" />
