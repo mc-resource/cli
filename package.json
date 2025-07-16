@@ -19,6 +19,7 @@
         "dev": "tsx src/main.ts",
         "build": "tsc",
         "format": "prettier . --write",
+        "format-src": "prettier ./src/ --write",
         "link": "tsc && npm link"
     },
     "bin": {
