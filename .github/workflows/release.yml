@@ -42,16 +42,20 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Set Discord embed color based on release type
+        id: set_color
+        run: |
+          if [[ "${GITHUB_REF##*/}" == *-* ]]; then
+            echo "color=d29922" >> $GITHUB_OUTPUT
+          else
+            echo "color=3eb991" >> $GITHUB_OUTPUT
+          fi
+
       - name: GitHub Releases to Discord
         uses: SethCohen/github-releases-to-discord@v1
         with:
           webhook_url: ${{ secrets.WEBHOOK_URL }}
-          color: |
-            if [[ "${GITHUB_REF##*/}" == *-* ]]; then
-              echo "color=d29922"
-            else
-              echo "color=3eb991"
-            fi
+          color: ${{ steps.set_color.outputs.color }}
           content: "<@&1394740955000606902>"
           footer_title: "github-actions"
           reduce_headings: true
