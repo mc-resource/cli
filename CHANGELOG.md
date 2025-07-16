@@ -5,6 +5,6 @@
 - reformated `package.json`
 - moved `@types/node` to `devDependencies`
 - enhanced `README`:
-- added downloads per month on npm badge
+- added shields.io badges with flat-square style into `README`: discord, npm package, downloads per month, latest and experimental tags
 - added wiki, roadmap and security pages from github wiki
 - license and development sections were added 
