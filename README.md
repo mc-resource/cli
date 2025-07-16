@@ -42,9 +42,9 @@ npm i -g @mc-resource/cli
 MCR Command-Line Interface (CLI) is accessible using Terminal to interact with resources in the Path.
 The shortcut is `mcr`.
 
-for example, to install `sodium` mod you can easily write: 
+for example, to install resources you can easily write: 
 ```bash
-mcr i sodium
+mcr install fabric-api sodium fresh-animations ...
 ```
 
 to see the general and complete usage of MCR please refer to [Wiki](https://github.com/mc-resource/cli/wiki) page.
