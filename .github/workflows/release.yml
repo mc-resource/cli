@@ -52,11 +52,17 @@ jobs:
           fi
 
       - name: GitHub Releases to Discord
-        uses: SethCohen/github-releases-to-discord@v1
+        uses: tsickert/discord-webhook@v7.0.0
         with:
-          webhook_url: ${{ secrets.WEBHOOK_URL }}
-          color: ${{ steps.set_color.outputs.color }}
+          webhook-url: ${{ secrets.WEBHOOK_URL }}
           content: "<@&1394740955000606902>"
-          footer_title: "github-actions"
-          reduce_headings: true
-          footer_timestamp: true
+          username: "MCR"
+          avatar-url: "https://avatars.githubusercontent.com/u/220100286"
+          embed-title: "Release ${{ github.ref_name }}"
+          embed-url: ${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ github.ref_name }}
+          embed-description: ${{ steps.readlog.outputs.log }}
+          embed-timestamp: ${{ github.event.head_commit.timestamp }}
+          embed-color: ${{ steps.set_color.outputs.color }}
+          embed-footer-text	: "github-actions"
+          embed-footer-icon-url: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+          embed-thumbnail-url: "https://avatars.githubusercontent.com/u/220100286"
