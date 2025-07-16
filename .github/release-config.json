@@ -1,0 +1,9 @@
+{
+  "template": "## 🚀 Release ${{RELEASE_TAG}}\n\n### Changes:\n${{CHANGELOG}}",
+  "pr_template": "- ${{TITLE}} (#${{NUMBER}})",
+  "empty_template": "No changes in this release.",
+  "categories": [],
+  "tag_resolver": {
+    "method": "commit"
+  }
+}

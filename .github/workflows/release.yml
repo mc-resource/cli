@@ -1,0 +1,40 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '*.*.*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate changelog only
+        id: changelog
+        uses: mikepenz/release-changelog-builder-action@v4
+        with:
+          failOnError: true
+          outputFile: CHANGELOG.md
+          configuration: .github/release-changelog-builder.yml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Read changelog into output
+        id: readlog
+        run: |
+          CHANGELOG=$(cat CHANGELOG.md)
+          echo "log<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGELOG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub release (pre-release)
+        uses: softprops/action-gh-release@v2
+        with:
+          body: ${{ steps.readlog.outputs.log }}
+          prerelease: ${{ contains(github.ref, '-') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
