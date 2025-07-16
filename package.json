@@ -3,7 +3,7 @@
     "name": "@mc-resource/cli",
     "author": "mc-resource",
     "license": "MIT",
-    "version": "0.0.1-experimental-2-20250716",
+    "version": "0.0.1-experimental-3-20250716",
     "description": "a Resource Manager for Minecraft",
     "repository": "https://github.com/mc-resource/cli",
     "main": "src/main.ts",
