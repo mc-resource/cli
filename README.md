@@ -65,3 +65,5 @@ For more details and best practices, please refer to the [Security](https://gith
 
 ## License 
 This project is released, published and maintained under MIT License.
+@ 2024-present Arman Studios
+Not an official Minecraft product or service. Not approved by Mojang or Microsoft.
