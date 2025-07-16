@@ -7,6 +7,14 @@
     "description": "a Resource Manager for Minecraft",
     "repository": "https://github.com/mc-resource/cli",
     "main": "src/main.ts",
+    "keywords": [
+        "cli",
+        "minecraft",
+        "versioning",
+        "package",
+        "manager",
+        "resource"
+    ],
     "scripts": {
         "dev": "tsx src/main.ts",
         "build": "tsc",
