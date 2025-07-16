@@ -1,13 +1,8 @@
 {
-    "dependencies": {
-        "@types/node": "^22.13.1",
-        "colorts": "^0.1.63",
-        "commander": "^13.1.0",
-        "node-fetch": "^3.3.2",
-        "readline-sync": "^1.4.10"
-    },
     "type": "commonjs",
     "name": "@mc-resource/cli",
+    "author": "mc-resource",
+    "license": "MIT",
     "version": "0.0.1-experimental-6-20250715",
     "description": "a Resource Manager for Minecraft",
     "repository": "https://github.com/mc-resource/cli",
@@ -21,9 +16,14 @@
     "bin": {
         "mcr": "./dist/main.js"
     },
-    "author": "mc-resource",
-    "license": "MIT",
+    "dependencies": {
+        "colorts": "^0.1.63",
+        "commander": "^13.1.0",
+        "node-fetch": "^3.3.2",
+        "readline-sync": "^1.4.10"
+    },
     "devDependencies": {
+        "@types/node": "^22.13.1",
         "@types/readline-sync": "^1.4.8",
         "prettier": "^3.6.2",
         "tsx": "^4.19.2",
