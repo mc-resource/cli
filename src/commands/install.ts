@@ -4,10 +4,8 @@ import { combineWithUnknownOptions } from '../utils/unknownOptions';
 import { Registries } from '../enums/registries';
 import { downloadResource } from '../registry/modrinth/v2';
 import {
-    retrieveGameVersion,
-    retrieveLoader,
-    retrieveResourceName,
-} from '../utils/resourceRetrieve';
+    parseIdentifier,
+} from '../utils/parseIdentifier';
 import { concreteConfig } from '../main';
 import { initExecute } from './init';
 
@@ -38,19 +36,21 @@ export async function installExecute(
         };
 
         for (const resource of resources) {
+            const parsedIdentifier = parseIdentifier(resource);
+
             const game_version =
-                retrieveGameVersion(resource) ||
+                parsedIdentifier.game_version ||
                 options.game_version ||
                 concreteConfig.manifest?.game_version ||
                 undefined;
 
             const loader =
-                retrieveLoader(resource) ||
+                parsedIdentifier.loader ||
                 options.loader ||
                 concreteConfig.manifest?.loader ||
                 undefined;
 
-            const resourceName = retrieveResourceName(resource);
+            const resourceName = parsedIdentifier.name || '';
 
             const downloadResult = await downloadResource({
                 resource: resourceName,
