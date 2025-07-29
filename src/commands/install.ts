@@ -3,7 +3,7 @@ import { Command, Option } from 'commander';
 import { combineWithUnknownOptions } from '../utils/unknownOptions';
 import { Registries } from '../enums/registries';
 import { downloadResource } from '../registry/modrinth/v2';
-import parseIdentifier from '../utils/parseIdentifier'; '../utils/parseIdentifier';
+import parseIdentifier from '../utils/parseIdentifier';
 import { concreteConfig } from '../main';
 import { initExecute } from './init';
 
