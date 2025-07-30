@@ -16,6 +16,7 @@ interface downloadResourceOptions {
     resource: string;
     game_versions?: string[];
     loaders?: string[];
+    version?: string;
     printResult?: boolean;
 }
 
@@ -77,25 +78,40 @@ export const downloadResource = async ({
             }
         }
         const resourceType = modrinthProject.project_type;
-        let param = {
-            project: modrinthProject,
-            game_versions: options.game_versions?.toString(),
-        };
-        if (
-            resourceType === ResourceType.MOD ||
-            resourceType === ResourceType.PLUGIN
-        ) {
-            param = Object.assign(param, {
-                loaders: options.loaders?.toString(),
-            });
-        }
 
-        const versions = await modrinthClient.getProjectVersions(param);
-        if (!versions || versions.length === 0) {
-            // Cannot find a compatible version
-            return DownloadResourceResult.FAIL_NO_COMPATIBLE_VERSION;
+        let version = new ProjectVersion();
+        if (options.version) {
+            // If a specific version is requested, fetch that version directly
+            Object.assign(
+                version,
+                await modrinthClient.getProjectVersion({
+                    project: modrinthProject,
+                    version: options.version,
+                }),
+            );
+        } else {
+            // If no specific version is requested, fetch the latest compatible version with game version and loader
+            let param = {
+                project: modrinthProject,
+                game_versions: options.game_versions?.toString(),
+            };
+
+            if (
+                resourceType === ResourceType.MOD ||
+                resourceType === ResourceType.PLUGIN
+            ) {
+                param = Object.assign(param, {
+                    loaders: options.loaders?.toString(),
+                });
+            }
+
+            const versions = await modrinthClient.getProjectVersions(param);
+            if (!versions || versions.length === 0) {
+                // Cannot find a compatible version
+                return DownloadResourceResult.FAIL_NO_COMPATIBLE_VERSION;
+            }
+            Object.assign(version, versions[0]);
         }
-        const version = Object.assign(new ProjectVersion(), versions[0]);
 
         let projectCheck: ConcreteProject | undefined;
         if (modrinthProject.id) {

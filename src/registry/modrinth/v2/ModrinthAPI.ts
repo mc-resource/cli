@@ -2,6 +2,7 @@ import { generateUserAgent, UserAgentData } from './utils';
 import { searchProjects } from './routes/projects/searchProjects';
 import { getProject } from './routes/projects/getProject';
 import { getProjectVersions } from './routes/versions/getProjectVersions';
+import { getProjectVersion } from './routes/versions/getProjectVersion';
 
 export interface ModrinthAPIOptions {
     apiURL?: string;
@@ -71,4 +72,5 @@ export class ModrinthAPI {
     public searchProjects = searchProjects;
     public getProject = getProject;
     public getProjectVersions = getProjectVersions;
+    public getProjectVersion = getProjectVersion;
 }

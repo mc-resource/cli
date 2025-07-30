@@ -13,7 +13,7 @@ interface InstallOptions {
 }
 
 export async function installExecute(
-    resources: string[],
+    resources: string[] | undefined,
     options: InstallOptions,
     ...args: Command[]
 ) {
@@ -33,43 +33,103 @@ export async function installExecute(
             skipped: 0,
         };
 
-        for (const resource of resources) {
-            const parsedIdentifier = parseIdentifier(resource);
+        concreteConfig.removeUnresolvedResourcesFiles();
 
-            const game_version =
-                parsedIdentifier.game_version ||
-                options.game_version ||
-                concreteConfig.manifest?.game_version ||
-                undefined;
+        const concreteResources = concreteConfig.manifest?.dependencies || [];
+        if (concreteResources && concreteResources.length > 0) {
+            for (const concreteResource of concreteResources) {
+                const resourceVersion = concreteResource.version?.name;
+                const resourceName = concreteResource.name || '';
 
-            const loader =
-                parsedIdentifier.loader ||
-                options.loader ||
-                concreteConfig.manifest?.loader ||
-                undefined;
+                if (
+                    resourceName &&
+                    concreteConfig.checkForResource(resourceName)
+                ) {
+                    result.skipped += 1;
+                    continue;
+                }
 
-            const resourceName = parsedIdentifier.name || '';
+                const downloadResult = await downloadResource({
+                    resource: resourceName,
+                    version: resourceVersion,
+                    printResult: concreteResources.length === 1 ? true : false,
+                });
 
-            const downloadResult = await downloadResource({
-                resource: resourceName,
-                game_versions: game_version,
-                loaders: loader,
-                printResult: resources.length === 1 ? true : false,
+                switch (downloadResult) {
+                    case 0:
+                        result.success += 1;
+                        break;
+                    case 3:
+                        result.skipped += 1;
+                        break;
+                    case 4:
+                        result.skipped += 1;
+                        break;
+                    default:
+                        result.failed += 1;
+                        break;
+                }
+            }
+        }
+
+        if (resources && resources.length > 0) {
+            const existingNames = new Set(
+                (concreteConfig.manifest?.dependencies || []).map(
+                    (r) => r.name,
+                ),
+            );
+
+            resources = resources.filter((resource) => {
+                const parsed = parseIdentifier(resource);
+                return parsed.name && !existingNames.has(parsed.name);
             });
+            for (const resource of resources) {
+                const parsedIdentifier = parseIdentifier(resource);
 
-            switch (downloadResult) {
-                case 0:
-                    result.success += 1;
-                    break;
-                case 3:
-                    result.skipped += 1;
-                    break;
-                case 4:
-                    result.skipped += 1;
-                    break;
-                default:
-                    result.failed += 1;
-                    break;
+                let game_version: string[] | undefined;
+                let loader: string[] | undefined;
+                let version: string | undefined;
+
+                if (!parsedIdentifier.version) {
+                    game_version =
+                        parsedIdentifier.game_version ||
+                        options.game_version ||
+                        concreteConfig.manifest?.game_version ||
+                        undefined;
+
+                    loader =
+                        parsedIdentifier.loader ||
+                        options.loader ||
+                        concreteConfig.manifest?.loader ||
+                        undefined;
+                } else {
+                    version = parsedIdentifier.version;
+                }
+
+                const resourceName = parsedIdentifier.name || '';
+
+                const downloadResult = await downloadResource({
+                    resource: resourceName,
+                    version: version,
+                    game_versions: game_version,
+                    loaders: loader,
+                    printResult: resources.length === 1 ? true : false,
+                });
+
+                switch (downloadResult) {
+                    case 0:
+                        result.success += 1;
+                        break;
+                    case 3:
+                        result.skipped += 1;
+                        break;
+                    case 4:
+                        result.skipped += 1;
+                        break;
+                    default:
+                        result.failed += 1;
+                        break;
+                }
             }
         }
 
@@ -87,7 +147,7 @@ export const InstallCommand: CommandDefinition = {
     aliases: ['i'],
     configure: (command: Command) => {
         return command
-            .argument('<RESOURCES...>', 'Name of the resource(s).')
+            .argument('[RESOURCES...]', 'Name of the resource(s).')
             .addOption(
                 new Option(
                     '--registry -r [registry]',
