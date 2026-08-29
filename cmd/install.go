@@ -164,7 +164,11 @@ func installResource(client registry.Client, slug, loader, gameVersion, registry
 
 	if oldFilePath != "" && oldFilePath != result.FilePath {
 		delete(lock.Dependencies, oldFilePath)
-		os.Remove(oldFilePath)
+
+		err := os.Remove(oldFilePath)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	lock.Dependencies[result.FilePath] = manifest.LockEntry{

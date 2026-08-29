@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 
 	"mcr/manifest"
-	"mcr/utils"
+	"mcr/terminal"
 
 	"github.com/spf13/cobra"
 )
@@ -87,25 +87,25 @@ func initializeConcrete(options InitCommandPrompts) error {
 	}
 
 	if options.Name == "" {
-		options.Name, _ = utils.Prompt("Project name: ")
+		options.Name, _ = terminal.Prompt("Project name: ")
 	}
 	if options.Version == "" {
-		options.Version, _ = utils.Prompt("Project version: ")
+		options.Version, _ = terminal.Prompt("Project version: ")
 	}
 	if options.Description == "" {
-		options.Description, _ = utils.Prompt("Project description: ")
+		options.Description, _ = terminal.Prompt("Project description: ")
 	}
 	if options.License == "" {
-		options.License, _ = utils.Prompt("Project license (e.g., MIT, Apache-2.0): ")
+		options.License, _ = terminal.Prompt("Project license (e.g., MIT, Apache-2.0): ")
 	}
 	if options.Loader == "" {
-		options.Loader, _ = utils.Prompt("Loader (e.g., vanilla, forge, fabric): ")
+		options.Loader, _ = terminal.Prompt("Loader (e.g., vanilla, forge, fabric): ")
 	}
 	if options.GameVersion == "" {
-		options.GameVersion, _ = utils.Prompt("Game version (e.g., 1.21.11): ")
+		options.GameVersion, _ = terminal.Prompt("Game version (e.g., 1.21.11): ")
 	}
 	if len(options.Authors) == 0 {
-		options.Authors, _ = utils.ListPrompt("Authors (comma separated): ")
+		options.Authors, _ = terminal.ListPrompt("Authors (comma separated): ")
 	}
 
 	concrete := &manifest.Concrete{
