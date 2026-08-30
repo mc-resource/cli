@@ -75,40 +75,44 @@ changelog:
 
   groups:
     - title: "🚨 Breaking Changes"
-      regexp: '^.*?(feat|fix|refactor|perf)(\([[:word:]-]+\))?!:.+$'
+      regexp: '^.*?([a-z]+)(\([[:word:]-]+\))?!:.+$'
       order: 0
 
     - title: "✨ Features"
       regexp: '^.*?feat(\([[:word:]-]+\))?:.+$'
       order: 1
 
+    - title: "❇️ Enhancements"
+      regexp: '^.*?enh(\([[:word:]-]+\))?:.+$'
+      order: 0
+
     - title: "🐛 Bug Fixes"
       regexp: '^.*?fix(\([[:word:]-]+\))?:.+$'
-      order: 2
+      order: 3
 
     - title: "⚡ Performance"
       regexp: '^.*?perf(\([[:word:]-]+\))?:.+$'
-      order: 3
+      order: 4
 
     - title: "♻️ Refactoring"
       regexp: '^.*?refactor(\([[:word:]-]+\))?:.+$'
-      order: 4
+      order: 5
 
     - title: "📚 Documentation"
       regexp: '^.*?docs?(\([[:word:]-]+\))?:.+$'
-      order: 5
+      order: 6
 
     - title: "🧪 Tests"
       regexp: '^.*?test(\([[:word:]-]+\))?:.+$'
-      order: 6
+      order: 7
 
     - title: "🔧 CI"
       regexp: '^.*?ci(\([[:word:]-]+\))?:.+$'
-      order: 7
+      order: 8
 
     - title: "🧹 Chores"
       regexp: '^.*?chore(\([[:word:]-]+\))?:.+$'
-      order: 8
+      order: 9
 
     - title: "📦 Other Changes"
       order: 999
