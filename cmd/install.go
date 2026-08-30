@@ -80,24 +80,28 @@ func runInstall(cmd *cobra.Command, args []string) error {
 
 	lock.CleanStaleDependencies()
 
-	installedCount := 0
+	var installedResources []registry.InstalledResource
 
 	for name := range concrete.Dependencies {
-		_, err := installResource(client, name, loader, gameVersion, registryFlag, lock)
+		result, err := installResource(client, name, loader, gameVersion, registryFlag, lock)
 		if err != nil {
 			fmt.Printf("  ✗ %s: %s\n", name, err)
 			continue
 		}
-		installedCount++
+		if result.Installed {
+			installedResources = append(installedResources, result.Resource)
+		}
 	}
 
 	for name := range concrete.DevDependencies {
-		_, err := installResource(client, name, loader, gameVersion, registryFlag, lock)
+		result, err := installResource(client, name, loader, gameVersion, registryFlag, lock)
 		if err != nil {
 			fmt.Printf("  ✗ %s (dev): %s\n", name, err)
 			continue
 		}
-		installedCount++
+		if result.Installed {
+			installedResources = append(installedResources, result.Resource)
+		}
 	}
 
 	if len(args) > 0 {
@@ -115,8 +119,10 @@ func runInstall(cmd *cobra.Command, args []string) error {
 				continue
 			}
 
-			concrete.AddDependency(resourceName, result.Version, isDevFlag)
-			installedCount++
+			concrete.AddDependency(result.Resource.Name, result.Resource.Version, isDevFlag)
+			if result.Installed {
+				installedResources = append(installedResources, result.Resource)
+			}
 		}
 
 		err = manifest.WriteConcrete("", concrete)
@@ -130,7 +136,11 @@ func runInstall(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("failed to update lock file: %w", err)
 	}
 
-	fmt.Printf("\nInstalled %d resource(s)\n", installedCount)
+	for _, resource := range installedResources {
+		fmt.Printf("+ %s (%s)\n", resource.Name, resource.Version)
+	}
+
+	fmt.Printf("\nInstalled %d resource(s)\n", len(installedResources))
 
 	return nil
 }
@@ -172,9 +182,9 @@ func installResource(client registry.Client, slug, loader, gameVersion, registry
 	}
 
 	lock.Dependencies[result.FilePath] = manifest.LockEntry{
-		Name:     slug,
-		Version:  result.Version,
-		Hash:     result.Hash,
+		Name:     result.Resource.Name,
+		Version:  result.Resource.Version,
+		Hash:     result.Resource.Hash,
 		Registry: registryName,
 		Engines: []string{
 			loader,

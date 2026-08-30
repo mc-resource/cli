@@ -162,7 +162,10 @@ func (c *Client) Install(slug, loader, gameVersion, destBaseDir, existingHash st
 	return &registry.InstallResult{
 		Installed: true,
 		FilePath:  destPath,
-		Version:   version.VersionNumber,
-		Hash:      file.Hashes.SHA1,
+		Resource: registry.InstalledResource{
+			Name:    slug,
+			Version: version.VersionNumber,
+			Hash:    file.Hashes.SHA1,
+		},
 	}, nil
 }

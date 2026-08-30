@@ -3,10 +3,16 @@ package registry
 
 // InstallResult contains the outcome of installing a single resource.
 type InstallResult struct {
+	Resource  InstalledResource
 	Installed bool   // Whether the file was actually downloaded (false if already up-to-date)
-	Version   string // The resolved version number
 	FilePath  string // The destination file path (e.g., "mods/fabric-api-0.141.3.jar")
-	Hash      string // The SHA1 hash of the installed file
+}
+
+// InstalledResource contains info related to installed resource
+type InstalledResource struct {
+	Name    string // The resolved resource name
+	Version string // The resolved version number
+	Hash    string // The SHA1 hash of the installed file
 }
 
 // Client is the interface that all registry clients must implement.
