@@ -7,6 +7,9 @@ import (
 	"mcr/registry/modrinth/shared"
 	"net/url"
 	"path/filepath"
+	"time"
+
+	"github.com/briandowns/spinner"
 )
 
 const BaseURL = "https://api.modrinth.com/v2"
@@ -135,8 +138,11 @@ func (c *Client) Install(slug, loader, gameVersion, destBaseDir, existingHash st
 		return &registry.InstallResult{
 			Installed: false,
 			FilePath:  destPath,
-			Version:   version.VersionNumber,
-			Hash:      file.Hashes.SHA1,
+			Resource: registry.InstalledResource{
+				Name:    slug,
+				Version: version.VersionNumber,
+				Hash:    file.Hashes.SHA1,
+			},
 		}, nil
 	}
 
@@ -148,14 +154,15 @@ func (c *Client) Install(slug, loader, gameVersion, destBaseDir, existingHash st
 	installDir := registry.GetInstallDir(resourceType)
 	destDir := filepath.Join(destBaseDir, installDir)
 
-	fmt.Printf("  ↓ %s (%s)\n", slug, version.VersionNumber)
+	s := spinner.New(spinner.CharSets[14], 100*time.Millisecond)
+	s.Suffix = " " + slug + " (" + version.VersionNumber + ")"
+	s.Start()
 
 	destPath, err := c.DownloadFile(destDir, file)
+	s.Stop()
 	if err != nil {
 		return nil, fmt.Errorf("failed to download: %w", err)
 	}
-
-	fmt.Printf("  ✓ %s (%s)\n", slug, version.VersionNumber)
 
 	return &registry.InstallResult{
 		Installed: true,
