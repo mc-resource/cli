@@ -1,0 +1,114 @@
+version: 2
+
+project_name: mcr
+
+before:
+  hooks:
+    - go mod tidy
+    - go test ./...
+
+builds:
+  - id: mcr
+    main: ./main.go
+
+    binary: mcr
+
+    env:
+      - CGO_ENABLED=0
+
+    goos:
+      - linux
+      - darwin
+      - windows
+
+    goarch:
+      - amd64
+      - arm64
+
+    ldflags:
+      - -s
+      - -w
+      - -X main.version={{.Version}}
+
+archives:
+  - id: archives
+    builds:
+      - mcr
+
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- .Version }}_
+      {{- .Os }}_
+      {{- .Arch }}
+
+    formats:
+      - tar.gz
+
+    format_overrides:
+      - goos: windows
+        formats:
+          - zip
+
+checksum:
+  name_template: "checksums.txt"
+  algorithm: sha256
+
+release:
+  github:
+    owner: mc-resource
+    name: cli
+
+changelog:
+  use: git
+
+  sort: asc
+
+  abbrev: 7
+
+  filters:
+    exclude:
+      - "^Merge pull request"
+      - "^Merge branch"
+      - "^Merge remote-tracking branch"
+      - "^chore\\(deps\\)"
+      - "^chore: update dependencies"
+
+  groups:
+    - title: "🚨 Breaking Changes"
+      regexp: '^.*?(feat|fix|refactor|perf)(\([[:word:]-]+\))?!:.+$'
+      order: 0
+
+    - title: "✨ Features"
+      regexp: '^.*?feat(\([[:word:]-]+\))?:.+$'
+      order: 1
+
+    - title: "🐛 Bug Fixes"
+      regexp: '^.*?fix(\([[:word:]-]+\))?:.+$'
+      order: 2
+
+    - title: "⚡ Performance"
+      regexp: '^.*?perf(\([[:word:]-]+\))?:.+$'
+      order: 3
+
+    - title: "♻️ Refactoring"
+      regexp: '^.*?refactor(\([[:word:]-]+\))?:.+$'
+      order: 4
+
+    - title: "📚 Documentation"
+      regexp: '^.*?docs?(\([[:word:]-]+\))?:.+$'
+      order: 5
+
+    - title: "🧪 Tests"
+      regexp: '^.*?test(\([[:word:]-]+\))?:.+$'
+      order: 6
+
+    - title: "🔧 CI"
+      regexp: '^.*?ci(\([[:word:]-]+\))?:.+$'
+      order: 7
+
+    - title: "🧹 Chores"
+      regexp: '^.*?chore(\([[:word:]-]+\))?:.+$'
+      order: 8
+
+    - title: "📦 Other Changes"
+      order: 999
