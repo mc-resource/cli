@@ -10,9 +10,11 @@ type InstallResult struct {
 
 // InstalledResource contains info related to installed resource
 type InstalledResource struct {
-	Name    string // The resolved resource name
-	Version string // The resolved version number
-	Hash    string // The SHA1 hash of the installed file
+	Name        string // The resolved resource name
+	Version     string // The resolved version number
+	Hash        string // The SHA1 hash of the installed file
+	Loader      string
+	GameVersion string
 }
 
 // Client is the interface that all registry clients must implement.
@@ -22,7 +24,7 @@ type InstalledResource struct {
 // In Go, interfaces are implemented implicitly — a type satisfies an interface
 // just by having the right methods. No "implements" keyword needed!
 type Client interface {
-	// Install resolves, downloads, and installs a resource.
+	// InstallResource resolves, downloads, and installs a resource.
 	// Returns InstallResult with installation details, or error if failed.
 	//
 	// slug:        Resource identifier (e.g., "fabric-api")
@@ -30,7 +32,16 @@ type Client interface {
 	// gameVersion: Minecraft version (e.g., "1.21.4")
 	// destBaseDir: Base directory for installation (e.g., current directory)
 	// existingHash: SHA1 hash of existing installation (empty if not installed)
-	Install(slug, loader, gameVersion, destBaseDir, existingHash string) (*InstallResult, error)
+	InstallResource(slug, loader, gameVersion, destBaseDir, existingHash string) (*InstallResult, error)
+
+	// InstallVersion resolves, downloads, and installs a specified version of resource.
+	// Returns InstallResult with installation details, or error if failed.
+	//
+	// slug:        Resource identifier (e.g., "fabric-api")
+	// version:      Version name (not ID)
+	// destBaseDir: Base directory for installation (e.g., current directory)
+	// existingHash: SHA1 hash of existing installation (empty if not installed)
+	InstallVersion(slug, version, destBaseDir, existingHash string) (*InstallResult, error)
 }
 
 // GetInstallDir returns the appropriate installation directory based on resource type.

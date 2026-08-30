@@ -82,8 +82,19 @@ func runInstall(cmd *cobra.Command, args []string) error {
 
 	var installedResources []registry.InstalledResource
 
-	for name := range concrete.Dependencies {
-		result, err := installResource(client, name, loader, gameVersion, registryFlag, lock)
+	for _, entry := range lock.Dependencies {
+		result, err := installVersion(client, entry.Name, entry.Version, registryFlag, lock)
+		if err != nil {
+			fmt.Printf("  ✗ %s: %s\n", entry.Name, err)
+			continue
+		}
+		if result.Installed {
+			installedResources = append(installedResources, result.Resource)
+		}
+	}
+
+	for name, version := range concrete.Dependencies {
+		result, err := installVersion(client, name, version, registryFlag, lock)
 		if err != nil {
 			fmt.Printf("  ✗ %s: %s\n", name, err)
 			continue
@@ -93,8 +104,8 @@ func runInstall(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	for name := range concrete.DevDependencies {
-		result, err := installResource(client, name, loader, gameVersion, registryFlag, lock)
+	for name, version := range concrete.DevDependencies {
+		result, err := installVersion(client, name, version, registryFlag, lock)
 		if err != nil {
 			fmt.Printf("  ✗ %s (dev): %s\n", name, err)
 			continue
@@ -167,7 +178,7 @@ func installResource(client registry.Client, slug, loader, gameVersion, registry
 		}
 	}
 
-	result, err := client.Install(slug, loader, gameVersion, ".", existingHash)
+	result, err := client.InstallResource(slug, loader, gameVersion, ".", existingHash)
 	if err != nil {
 		return nil, err
 	}
@@ -189,6 +200,45 @@ func installResource(client registry.Client, slug, loader, gameVersion, registry
 		Engines: []string{
 			loader,
 			"minecraft-" + gameVersion,
+		},
+	}
+
+	return result, nil
+}
+
+func installVersion(client registry.Client, slug, version, registryName string, lock *manifest.Lock) (*registry.InstallResult, error) {
+	var existingHash string
+	var oldFilePath string
+	for path, entry := range lock.Dependencies {
+		if entry.Name == slug && entry.Registry == registryName {
+			existingHash = entry.Hash
+			oldFilePath = path
+			break
+		}
+	}
+
+	result, err := client.InstallVersion(slug, version, ".", existingHash)
+	if err != nil {
+		return nil, err
+	}
+
+	if oldFilePath != "" && oldFilePath != result.FilePath {
+		delete(lock.Dependencies, oldFilePath)
+
+		err := os.Remove(oldFilePath)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	lock.Dependencies[result.FilePath] = manifest.LockEntry{
+		Name:     result.Resource.Name,
+		Version:  result.Resource.Version,
+		Hash:     result.Resource.Hash,
+		Registry: registryName,
+		Engines: []string{
+			result.Resource.Loader,
+			"minecraft-" + result.Resource.GameVersion,
 		},
 	}
 

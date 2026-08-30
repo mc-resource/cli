@@ -2,6 +2,7 @@ package v2
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"mcr/registry"
 	"mcr/registry/modrinth/shared"
@@ -76,6 +77,24 @@ func (c *Client) GetVersion(versionID string) (*Version, error) {
 	return &result, nil
 }
 
+func (c *Client) GetVersionByName(project, version string) (*Version, error) {
+	endpoint := fmt.Sprintf("/project/%s/version", project)
+
+	var result []Version
+	err := c.Get(endpoint, &result)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, v := range result {
+		if v.VersionNumber == version {
+			return &v, nil
+		}
+	}
+
+	return nil, errors.New("version not found")
+}
+
 func (c *Client) GetLatestRelease(idOrSlug string, loader string, gameVersion string) (*Version, error) {
 	versions, err := c.ListVersions(idOrSlug, []string{loader}, []string{gameVersion})
 	if err != nil {
@@ -109,7 +128,7 @@ func GetPrimaryFile(version *Version) (*shared.File, error) {
 	return &version.Files[0], nil
 }
 
-func (c *Client) Install(slug, loader, gameVersion, destBaseDir, existingHash string) (*registry.InstallResult, error) {
+func (c *Client) InstallResource(slug, loader, gameVersion, destBaseDir, existingHash string) (*registry.InstallResult, error) {
 	project, err := c.GetProject(slug)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get project: %w", err)
@@ -126,8 +145,6 @@ func (c *Client) Install(slug, loader, gameVersion, destBaseDir, existingHash st
 	}
 
 	if existingHash != "" && existingHash == file.Hashes.SHA1 {
-		fmt.Printf("  ✓ %s (%s) (already installed)\n", slug, version.VersionNumber)
-
 		resourceType := ""
 		if project.ProjectType != "" {
 			resourceType = project.ProjectType
@@ -168,9 +185,81 @@ func (c *Client) Install(slug, loader, gameVersion, destBaseDir, existingHash st
 		Installed: true,
 		FilePath:  destPath,
 		Resource: registry.InstalledResource{
+			Name:        slug,
+			Version:     version.VersionNumber,
+			Hash:        file.Hashes.SHA1,
+			Loader:      loader,
+			GameVersion: gameVersion,
+		},
+	}, nil
+}
+
+func (c *Client) InstallVersion(slug, specifiedVersion, destBaseDir, existingHash string) (*registry.InstallResult, error) {
+	project, err := c.GetProject(slug)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get project: %w", err)
+	}
+
+	version, err := c.GetVersionByName(slug, specifiedVersion)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get version: %w", err)
+	}
+
+	file, err := GetPrimaryFile(version)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get primary file: %w", err)
+	}
+
+	if existingHash != "" && existingHash == file.Hashes.SHA1 {
+		resourceType := ""
+		if project.ProjectType != "" {
+			resourceType = project.ProjectType
+		}
+		installDir := registry.GetInstallDir(resourceType)
+		destPath := filepath.Join(destBaseDir, installDir, file.Filename)
+
+		return &registry.InstallResult{
+			Installed: false,
+			FilePath:  destPath,
+			Resource: registry.InstalledResource{
+				Name:    slug,
+				Version: version.VersionNumber,
+				Hash:    file.Hashes.SHA1,
+				// TODO: put the correct loader and game version here
+				Loader:      version.Loaders[0],
+				GameVersion: version.GameVersions[0],
+			},
+		}, nil
+	}
+
+	resourceType := ""
+	if project.ProjectType != "" {
+		resourceType = project.ProjectType
+	}
+
+	installDir := registry.GetInstallDir(resourceType)
+	destDir := filepath.Join(destBaseDir, installDir)
+
+	s := spinner.New(spinner.CharSets[14], 100*time.Millisecond)
+	s.Suffix = " " + slug + " (" + version.VersionNumber + ")"
+	s.Start()
+
+	destPath, err := c.DownloadFile(destDir, file)
+	s.Stop()
+	if err != nil {
+		return nil, fmt.Errorf("failed to download: %w", err)
+	}
+
+	return &registry.InstallResult{
+		Installed: true,
+		FilePath:  destPath,
+		Resource: registry.InstalledResource{
 			Name:    slug,
 			Version: version.VersionNumber,
 			Hash:    file.Hashes.SHA1,
+			// TODO: put the correct loader and game version here
+			Loader:      version.Loaders[0],
+			GameVersion: version.GameVersions[0],
 		},
 	}, nil
 }
